@@ -14,8 +14,8 @@
     ns=ceiling(T/dt)
 	write(*,*) ns
 	do iter=1,ns
-!		call TVD_RK3(rho,u,v,p)
-		call RK4(rho,u,v,p)
+		call TVD_RK3(rho,u,v,p)
+		!call RK4(rho,u,v,p)
 
 		if (my_id==0) then
 			write(*,*) iter
