@@ -14,15 +14,15 @@
     ns=ceiling(T/dt)
 	write(*,*) ns
 	do iter=1,ns
-		call TVD_RK3(rho,u,v,p)
-		!call RK4(rho,u,v,p)
+		!call TVD_RK3(rho,u,v,p)
+		call RK4(rho,u,v,p)
 
 		if (my_id==0) then
 			write(*,*) iter
 			write(*,*) iter*dt
 		endif
 
-		if (iter==10000) then
+		if (iter==20000) then
 			call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 			write(filename,"('Taylor',F5.2,'.plt')") iter*dt
 			call write_data(rho,u,v,p,xx,yy,filename)
