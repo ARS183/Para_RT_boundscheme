@@ -1,0 +1,18 @@
+#!/bin/sh -f
+#PBS -N SB2_241x961_np2x5_T21_Save15000
+#PBS -q batch
+#PBS -l nodes=cu01:ppn=10
+
+source /opt/intel/composer_xe_2015/bin/compilervars.sh intel64
+source /opt/intel/composer_xe_2015.1.133/mkl/bin/intel64/mklvars_intel64.sh
+source /opt/intel/impi/5.0.2.044/intel64/bin/mpivars.sh
+
+cd $PBS_O_WORKDIR
+cat $PBS_NODEFILE > /$PBS_O_WORKDIR/nodefile
+
+date
+mpirun -hosts cu01 -np 10 ./openNS2d.out > log
+date
+
+exit
+
