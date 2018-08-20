@@ -669,8 +669,8 @@ subroutine DF_UCC45_P_circle(u,s,f,n,h)
 		d(n-1)=(-3.d0*sig*u(n-3)+(-42.d0-2.d0*sig)*u(n-2)+(48.d0-12.d0*sig)*u(n-1) &
 		+(-6.d0+18.d0*sig)*u(n)-sig*u(2))/12.d0/h+(1.d0-sig)*h*s(n-1)
 
-		d(n)=(-3.d0*sig*u(n-2)+(-42.d0-2.d0*sig)*u(n-1)+(48.d0-12.d0*sig)*u(n) &
-		+(-6.d0+18.d0*sig)*u(2)-sig*u(3))/12.d0/h+(1.d0-sig)*h*s(n)
+!		d(n)=(-3.d0*sig*u(n-2)+(-42.d0-2.d0*sig)*u(n-1)+(48.d0-12.d0*sig)*u(n) &
+!		+(-6.d0+18.d0*sig)*u(2)-sig*u(3))/12.d0/h+(1.d0-sig)*h*s(n)
 
 		do i=1,n
 			center(i)=2.d0+sig
@@ -678,9 +678,10 @@ subroutine DF_UCC45_P_circle(u,s,f,n,h)
 			low(i)=1.d0+sig
 		enddo
 
-		call trid_circle(1,n,n,center,up,low,d)
+		call trid_circle(1,n-1,n,center,up,low,d)
 
-		f(1:n)=d(1:n)
+		f(1:n-1)=d(1:n-1)
+		f(n)=f(1)
 	
 end subroutine
 
@@ -706,8 +707,8 @@ subroutine DF_UCC45_M_circle(u,s,f,n,h)
 			+(6.d0-18.d0*sig)*u(i-1)+sig*u(i-2))/12.d0/h-(1.d0-sig)*h*s(i)
 		enddo
 
-		d(n)=(3.d0*sig*u(3)+(42.d0+2.d0*sig)*u(2)+(-48.d0+12.d0*sig)*u(n) &
-		+(6.d0-18.d0*sig)*u(n-1)+sig*u(n-2))/12.d0/h-(1.d0-sig)*h*s(n)
+!		d(n)=(3.d0*sig*u(3)+(42.d0+2.d0*sig)*u(2)+(-48.d0+12.d0*sig)*u(n) &
+!		+(6.d0-18.d0*sig)*u(n-1)+sig*u(n-2))/12.d0/h-(1.d0-sig)*h*s(n)
 		
 		d(n-1)=(3.d0*sig*u(2)+(42.d0+2.d0*sig)*u(n)+(-48.d0+12.d0*sig)*u(n-1) &
 		+(6.d0-18.d0*sig)*u(n-2)+sig*u(n-3))/12.d0/h-(1.d0-sig)*h*s(n-1)
@@ -724,9 +725,10 @@ subroutine DF_UCC45_M_circle(u,s,f,n,h)
 			up(i)=1.d0+sig
 		enddo
 
-		call trid_circle(1,n,n,center,up,low,d)
+		call trid_circle(1,n-1,n,center,up,low,d)
 
-		f(1:n)=d(1:n)
+		f(1:n-1)=d(1:n-1)
+		f(n)=f(1)
 
 
 end subroutine
@@ -792,11 +794,12 @@ subroutine D2F_PADE4_circle(u,s,n,h)
 	do i=2,n-1
 		right(i)=(u(i+1)+u(i-1)-2.d0*u(i))/h2
 	enddo
-	right(n)=(u(2)+u(n-1)-2.d0*u(n))/h2	
+!	right(n)=(u(2)+u(n-1)-2.d0*u(n))/h2	
 
-	call trid_circle(1,n,n,center,up,low,right)
+	call trid_circle(1,n-1,n,center,up,low,right)
 
-	s(1:n)=right(1:n)
+	s(1:n-1)=right(1:n-1)
+	s(n)=s(1)
 end subroutine
 !-----------------------------------------------
 
