@@ -151,6 +151,11 @@
 	call OCFD_DF_BOUND_6th(u,f,n,h,flag)
 	goto 100
 
+!=======by JQ.Chen 201809
+	else if(NUM_METHOD .eq. OCFD_NUMERICAL_WENO_5th) then
+	call OCFD_DF1_BOUND_5th(u,f,n,h,flag)
+	goto 100
+!===========
 
 	else
 	      print*, 'This Numerical Method is not supported'
