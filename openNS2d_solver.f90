@@ -366,7 +366,7 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 			call OCFD_DFY_BOUND_CHECK_2d(Fpos4,df_Fpos4,NUM_METHOD_OTH)
 			call OCFD_DFY_BOUND_CHECK_2d(Fneg4,df_Fneg4,NUM_METHOD_OTH)
 
-
+	endif
 
 !================================================================
 	else
