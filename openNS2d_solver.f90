@@ -204,6 +204,8 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 !-------------------------------------------------------------------------------
 	elseif (NUM_METHOD_CONV==5) then
 !==================WENO=========================================
+
+	if (npx0 .ne. 1) then	
 		call check_x2d(Epos1)
 		call check_x2d(Epos2)
 		call check_x2d(Epos3)
@@ -213,72 +215,6 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 		call check_x2d(Eneg2)
 		call check_x2d(Eneg3)
 		call check_x2d(Eneg4)
-
-!Reflective Boundary
-		!if (npx==0) then
-		!	Epos1(0,:)=Epos1(2,:)
-		!	Epos2(0,:)=Epos2(2,:)
-		!	Epos3(0,:)=Epos3(2,:)
-		!	Epos4(0,:)=Epos4(2,:)
-  !
-		!	Epos1(-1,:)=Epos1(3,:)
-		!	Epos2(-1,:)=Epos2(3,:)
-		!	Epos3(-1,:)=Epos3(3,:)
-		!	Epos4(-1,:)=Epos4(3,:)
-  !
-		!	Epos1(-2,:)=Epos1(4,:)
-		!	Epos2(-2,:)=Epos2(4,:)
-		!	Epos3(-2,:)=Epos3(4,:)
-		!	Epos4(-2,:)=Epos4(4,:)
-  !
-		!	Eneg1(0,:)=Eneg1(2,:)
-		!	Eneg2(0,:)=Eneg2(2,:)
-		!	Eneg3(0,:)=Eneg3(2,:)
-		!	Eneg4(0,:)=Eneg4(2,:)
-  !
-		!	Eneg1(-1,:)=Eneg1(3,:)
-		!	Eneg2(-1,:)=Eneg2(3,:)
-		!	Eneg3(-1,:)=Eneg3(3,:)
-		!	Eneg4(-1,:)=Eneg4(3,:)
-  !
-		!	Eneg1(-2,:)=Eneg1(4,:)
-		!	Eneg2(-2,:)=Eneg2(4,:)
-		!	Eneg3(-2,:)=Eneg3(4,:)
-		!	Eneg4(-2,:)=Eneg4(4,:)
-		!endif
-  !
-		!if (npx==npx0-1) then
-		!	Epos1(nx+1,:)=Epos1(nx-1,:)
-		!	Epos2(nx+1,:)=Epos2(nx-1,:)
-		!	Epos3(nx+1,:)=Epos3(nx-1,:)
-		!	Epos4(nx+1,:)=Epos4(nx-1,:)
-  !
-		!	Epos1(nx+2,:)=Epos1(nx-2,:)
-		!	Epos2(nx+2,:)=Epos2(nx-2,:)
-		!	Epos3(nx+2,:)=Epos3(nx-2,:)
-		!	Epos4(nx+2,:)=Epos4(nx-2,:)
-  !
-		!	Epos1(nx+3,:)=Epos1(nx-3,:)
-		!	Epos2(nx+3,:)=Epos2(nx-3,:)
-		!	Epos3(nx+3,:)=Epos3(nx-3,:)
-		!	Epos4(nx+3,:)=Epos4(nx-3,:)
-  !
-		!	Eneg1(nx+1,:)=Eneg1(nx-1,:)
-		!	Eneg2(nx+1,:)=Eneg2(nx-1,:)
-		!	Eneg3(nx+1,:)=Eneg3(nx-1,:)
-		!	Eneg4(nx+1,:)=Eneg4(nx-1,:)
-  !
-		!	Eneg1(nx+2,:)=Eneg1(nx-2,:)
-		!	Eneg2(nx+2,:)=Eneg2(nx-2,:)
-		!	Eneg3(nx+2,:)=Eneg3(nx-2,:)
-		!	Eneg4(nx+2,:)=Eneg4(nx-2,:)
-  !
-		!	Eneg1(nx+3,:)=Eneg1(nx-3,:)
-		!	Eneg2(nx+3,:)=Eneg2(nx-3,:)
-		!	Eneg3(nx+3,:)=Eneg3(nx-3,:)
-		!	Eneg4(nx+3,:)=Eneg4(nx-3,:)
-		!endif												
-!-------------------------
 
 		do j=1,ny
 			call du1_weno5(Epos1(:,j),df_Epos1(:,j),nx,hx)
@@ -303,7 +239,55 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 			call OCFD_DFX_BOUND_CHECK_2d(Epos4,df_Epos4,NUM_METHOD_OTH)
 			call OCFD_DFX_BOUND_CHECK_2d(Eneg4,df_Eneg4,NUM_METHOD_OTH)
 
+	elseif (npx0==1) then
 
+		Epos1(-3:0,:)=Epos1(nx-4:nx-1,:)
+		Epos2(-3:0,:)=Epos2(nx-4:nx-1,:)
+		Epos3(-3:0,:)=Epos3(nx-4:nx-1,:)
+		Epos4(-3:0,:)=Epos4(nx-4:nx-1,:)
+		
+		Epos1(nx+1:nx+4,:)=Epos1(2:5,:)
+		Epos2(nx+1:nx+4,:)=Epos2(2:5,:)
+		Epos3(nx+1:nx+4,:)=Epos3(2:5,:)
+		Epos4(nx+1:nx+4,:)=Epos4(2:5,:)
+
+
+		Eneg1(-3:0,:)=Eneg1(nx-4:nx-1,:)
+		Eneg2(-3:0,:)=Eneg2(nx-4:nx-1,:)
+		Eneg3(-3:0,:)=Eneg3(nx-4:nx-1,:)
+		Eneg4(-3:0,:)=Eneg4(nx-4:nx-1,:)
+		
+		Eneg1(nx+1:nx+4,:)=Eneg1(2:5,:)
+		Eneg2(nx+1:nx+4,:)=Eneg2(2:5,:)
+		Eneg3(nx+1:nx+4,:)=Eneg3(2:5,:)
+		Eneg4(nx+1:nx+4,:)=Eneg4(2:5,:)
+
+		do j=1,ny
+			call du1_weno5(Epos1(:,j),df_Epos1(:,j),nx,hx)
+			call du2_weno5(Eneg1(:,j),df_Eneg1(:,j),nx,hx)
+			
+			call du1_weno5(Epos2(:,j),df_Epos2(:,j),nx,hx)
+			call du2_weno5(Eneg2(:,j),df_Eneg2(:,j),nx,hx)
+			
+			call du1_weno5(Epos3(:,j),df_Epos3(:,j),nx,hx)
+			call du2_weno5(Eneg3(:,j),df_Eneg3(:,j),nx,hx)
+			
+			call du1_weno5(Epos4(:,j),df_Epos4(:,j),nx,hx)
+			call du2_weno5(Eneg4(:,j),df_Eneg4(:,j),nx,hx)	
+		end do
+
+			call OCFD_DFX_BOUND_CHECK_2d(Epos1,df_Epos1,NUM_METHOD_OTH)
+			call OCFD_DFX_BOUND_CHECK_2d(Eneg1,df_Eneg1,NUM_METHOD_OTH)
+			call OCFD_DFX_BOUND_CHECK_2d(Epos2,df_Epos2,NUM_METHOD_OTH)
+			call OCFD_DFX_BOUND_CHECK_2d(Eneg2,df_Eneg2,NUM_METHOD_OTH)
+			call OCFD_DFX_BOUND_CHECK_2d(Epos3,df_Epos3,NUM_METHOD_OTH)
+			call OCFD_DFX_BOUND_CHECK_2d(Eneg3,df_Eneg3,NUM_METHOD_OTH)
+			call OCFD_DFX_BOUND_CHECK_2d(Epos4,df_Epos4,NUM_METHOD_OTH)
+			call OCFD_DFX_BOUND_CHECK_2d(Eneg4,df_Eneg4,NUM_METHOD_OTH)
+	endif
+
+
+	if (npx0 .ne. 1) then
 		call check_y2d(Fpos1)
 		call check_y2d(Fpos2)
 		call check_y2d(Fpos3)
@@ -335,6 +319,55 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 			call OCFD_DFY_BOUND_CHECK_2d(Fneg3,df_Fneg3,NUM_METHOD_OTH)
 			call OCFD_DFY_BOUND_CHECK_2d(Fpos4,df_Fpos4,NUM_METHOD_OTH)
 			call OCFD_DFY_BOUND_CHECK_2d(Fneg4,df_Fneg4,NUM_METHOD_OTH)
+
+	elseif (npx0==1) then
+
+		Fpos1(:,-3:0)=Fpos1(nx-4:nx-1)
+		Fpos2(:,-3:0)=Fpos2(nx-4:nx-1)
+		Fpos3(:,-3:0)=Fpos3(nx-4:nx-1)
+		Fpos4(:,-3:0)=Fpos4(nx-4:nx-1)
+		
+		Fpos1(:,nx+1:nx+4)=Fpos1(:,2:5)
+		Fpos2(:,nx+1:nx+4)=Fpos2(:,2:5)
+		Fpos3(:,nx+1:nx+4)=Fpos3(:,2:5)
+		Fpos4(:,nx+1:nx+4)=Fpos4(:,2:5)
+
+
+		Fneg1(:,-3:0)=Fneg1(:,nx-4:nx-1)
+		Fneg2(:,-3:0)=Fneg2(:,nx-4:nx-1)
+		Fneg3(:,-3:0)=Fneg3(:,nx-4:nx-1)
+		Fneg4(:,-3:0)=Fneg4(:,nx-4:nx-1)
+		
+		Fneg1(:,nx+1:nx+4)=Fneg1(:,2:5)
+		Fneg2(:,nx+1:nx+4)=Fneg2(:,2:5)
+		Fneg3(:,nx+1:nx+4)=Fneg3(:,2:5)
+		Fneg4(:,nx+1:nx+4)=Fneg4(:,2:5)
+
+		do i=1,nx
+			call du1_weno5(Fpos1(i,:),df_Fpos1(i,:),ny,hy)
+			call du2_weno5(Fneg1(i,:),df_Fneg1(i,:),ny,hy)
+			
+			call du1_weno5(Fpos2(i,:),df_Fpos2(i,:),ny,hy)
+			call du2_weno5(Fneg2(i,:),df_Fneg2(i,:),ny,hy)
+			
+			call du1_weno5(Fpos3(i,:),df_Fpos3(i,:),ny,hy)
+			call du2_weno5(Fneg3(i,:),df_Fneg3(i,:),ny,hy)
+			
+			call du1_weno5(Fpos4(i,:),df_Fpos4(i,:),ny,hy)
+			call du2_weno5(Fneg4(i,:),df_Fneg4(i,:),ny,hy)	
+		end do
+
+			call OCFD_DFY_BOUND_CHECK_2d(Fpos1,df_Fpos1,NUM_METHOD_OTH)
+			call OCFD_DFY_BOUND_CHECK_2d(Fneg1,df_Fneg1,NUM_METHOD_OTH)
+			call OCFD_DFY_BOUND_CHECK_2d(Fpos2,df_Fpos2,NUM_METHOD_OTH)
+			call OCFD_DFY_BOUND_CHECK_2d(Fneg2,df_Fneg2,NUM_METHOD_OTH)
+			call OCFD_DFY_BOUND_CHECK_2d(Fpos3,df_Fpos3,NUM_METHOD_OTH)
+			call OCFD_DFY_BOUND_CHECK_2d(Fneg3,df_Fneg3,NUM_METHOD_OTH)
+			call OCFD_DFY_BOUND_CHECK_2d(Fpos4,df_Fpos4,NUM_METHOD_OTH)
+			call OCFD_DFY_BOUND_CHECK_2d(Fneg4,df_Fneg4,NUM_METHOD_OTH)
+
+
+
 !================================================================
 	else
 	      print*, 'This Numerical Method is not supported'
