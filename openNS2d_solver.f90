@@ -22,11 +22,11 @@
 			write(*,*) iter*dt
 		endif
 
-		if (iter==20000) then
-			call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-			write(filename,"('Taylor',F5.2,'.plt')") iter*dt
-			call write_data(rho,u,v,p,xx,yy,filename)
-		endif
+	!	if (iter==20000) then
+	!		call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+	!		write(filename,"('Taylor',F5.2,'.plt')") iter*dt
+	!		call write_data(rho,u,v,p,xx,yy,filename)
+	!	endif
 
 		if (mod(iter,Istep_save)==0) then
 			call MPI_BARRIER(MPI_COMM_WORLD,ierr)
