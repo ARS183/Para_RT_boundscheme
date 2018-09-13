@@ -322,10 +322,10 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 
 	elseif (npx0==1) then
 
-		Fpos1(:,-3:0)=Fpos1(nx-4:nx-1)
-		Fpos2(:,-3:0)=Fpos2(nx-4:nx-1)
-		Fpos3(:,-3:0)=Fpos3(nx-4:nx-1)
-		Fpos4(:,-3:0)=Fpos4(nx-4:nx-1)
+		Fpos1(:,-3:0)=Fpos1(:,nx-4:nx-1)
+		Fpos2(:,-3:0)=Fpos2(:,nx-4:nx-1)
+		Fpos3(:,-3:0)=Fpos3(:,nx-4:nx-1)
+		Fpos4(:,-3:0)=Fpos4(:,nx-4:nx-1)
 		
 		Fpos1(:,nx+1:nx+4)=Fpos1(:,2:5)
 		Fpos2(:,nx+1:nx+4)=Fpos2(:,2:5)
