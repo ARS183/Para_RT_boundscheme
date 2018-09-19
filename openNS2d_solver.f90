@@ -287,7 +287,7 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 	endif
 
 
-	if (npx0 .ne. 1) then
+	if (npy0 .ne. 1) then
 		call check_y2d(Fpos1)
 		call check_y2d(Fpos2)
 		call check_y2d(Fpos3)
@@ -320,28 +320,28 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 			call OCFD_DFY_BOUND_CHECK_2d(Fpos4,df_Fpos4,NUM_METHOD_OTH)
 			call OCFD_DFY_BOUND_CHECK_2d(Fneg4,df_Fneg4,NUM_METHOD_OTH)
 
-	elseif (npx0==1) then
+	elseif (npy0==1) then
 
-		Fpos1(:,-3:0)=Fpos1(:,nx-4:nx-1)
-		Fpos2(:,-3:0)=Fpos2(:,nx-4:nx-1)
-		Fpos3(:,-3:0)=Fpos3(:,nx-4:nx-1)
-		Fpos4(:,-3:0)=Fpos4(:,nx-4:nx-1)
+		Fpos1(:,-3:0)=Fpos1(:,ny-4:ny-1)
+		Fpos2(:,-3:0)=Fpos2(:,ny-4:ny-1)
+		Fpos3(:,-3:0)=Fpos3(:,ny-4:ny-1)
+		Fpos4(:,-3:0)=Fpos4(:,ny-4:ny-1)
 		
-		Fpos1(:,nx+1:nx+4)=Fpos1(:,2:5)
-		Fpos2(:,nx+1:nx+4)=Fpos2(:,2:5)
-		Fpos3(:,nx+1:nx+4)=Fpos3(:,2:5)
-		Fpos4(:,nx+1:nx+4)=Fpos4(:,2:5)
+		Fpos1(:,ny+1:ny+4)=Fpos1(:,2:5)
+		Fpos2(:,ny+1:ny+4)=Fpos2(:,2:5)
+		Fpos3(:,ny+1:ny+4)=Fpos3(:,2:5)
+		Fpos4(:,ny+1:ny+4)=Fpos4(:,2:5)
 
 
-		Fneg1(:,-3:0)=Fneg1(:,nx-4:nx-1)
-		Fneg2(:,-3:0)=Fneg2(:,nx-4:nx-1)
-		Fneg3(:,-3:0)=Fneg3(:,nx-4:nx-1)
-		Fneg4(:,-3:0)=Fneg4(:,nx-4:nx-1)
+		Fneg1(:,-3:0)=Fneg1(:,ny-4:ny-1)
+		Fneg2(:,-3:0)=Fneg2(:,ny-4:ny-1)
+		Fneg3(:,-3:0)=Fneg3(:,ny-4:ny-1)
+		Fneg4(:,-3:0)=Fneg4(:,ny-4:ny-1)
 		
-		Fneg1(:,nx+1:nx+4)=Fneg1(:,2:5)
-		Fneg2(:,nx+1:nx+4)=Fneg2(:,2:5)
-		Fneg3(:,nx+1:nx+4)=Fneg3(:,2:5)
-		Fneg4(:,nx+1:nx+4)=Fneg4(:,2:5)
+		Fneg1(:,ny+1:ny+4)=Fneg1(:,2:5)
+		Fneg2(:,ny+1:ny+4)=Fneg2(:,2:5)
+		Fneg3(:,ny+1:ny+4)=Fneg3(:,2:5)
+		Fneg4(:,ny+1:ny+4)=Fneg4(:,2:5)
 
 		do i=1,nx
 			call du1_weno5(Fpos1(i,:),df_Fpos1(i,:),ny,hy)
