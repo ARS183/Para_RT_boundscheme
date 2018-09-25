@@ -151,11 +151,7 @@
 	call OCFD_DF_BOUND_6th(u,f,n,h,flag)
 	goto 100
 
-!=======by JQ.Chen 201809
-	else if(NUM_METHOD .eq. OCFD_NUMERICAL_WENO_5th) then
-	call OCFD_DF1_BOUND_5th(u,f,n,h,flag)
-	goto 100
-!===========
+
 
 	else
 	      print*, 'This Numerical Method is not supported'
@@ -377,6 +373,89 @@
 !===========================================!
 !!!ReflectiveBoundary_by_chen_201807!!!!
 !===========================================!
+subroutine OCFD_DFX_REFBOUND_CHECK_2d(u,f,NUM_METHOD,pmflag)
+	include 'openNS3d.h'
+	real(kind=OCFD_REAL_KIND),dimension(1-LAP:nx+LAP,1-LAP:ny+LAP) :: u,f
+	integer i,j,NUM_METHOD,pmflag
+
+    if (Iperiodic_X .ne. 1) then !!!!
+
+	if (pmflag .eq. 1) then
+
+	if (npx .eq. 0) then
+	do j=1,ny
+	call OCFD_DF1_BOUND_5th(u(:,j),f(:,j),nx,hx,1)
+	enddo
+	endif
+
+	if (npx .eq. npx0-1) then
+	do j=1,ny
+	call OCFD_DF1_BOUND_5th(u(:,j),f(:,j),nx,hx,2)
+	enddo
+	endif
+
+	elseif (pmflag .eq. 2) then
+
+	if (npx .eq. 0) then
+	do j=1,ny
+	call OCFD_DF2_BOUND_5th(u(:,j),f(:,j),nx,hx,1)
+	enddo
+	endif
+
+	if (npx .eq. npx0-1) then
+	do j=1,ny
+	call OCFD_DF2_BOUND_5th(u(:,j),f(:,j),nx,hx,2)
+	enddo
+	endif
+
+	endif
+
+	endif
+end subroutine
+
+!----------------------------------------------
+subroutine OCFD_DFY_REFBOUND_CHECK_2d(u,f,NUM_METHOD,pmflag)
+	include 'openNS3d.h'
+	real(kind=OCFD_REAL_KIND),dimension(1-LAP:nx+LAP,1-LAP:ny+LAP) :: u,f
+	integer i,j,NUM_METHOD,pmflag
+
+    if (Iperiodic_Y .ne. 1) then !!!!
+
+	if (pmflag .eq. 1) then
+
+	if (npx .eq. 0) then
+	do i=1,nx
+	call OCFD_DF1_BOUND_5th(u(i,:),f(i,:),ny,hy,1)
+	enddo
+	endif
+
+	if (npx .eq. npx0-1) then
+	do i=1,nx
+	call OCFD_DF1_BOUND_5th(u(i,:),f(i,:),ny,hy,2)
+	enddo
+	endif
+
+	elseif (pmflag .eq. 2) then
+
+	if (npx .eq. 0) then
+	do i=1,nx
+	call OCFD_DF2_BOUND_5th(u(i,:),f(i,:),ny,hy,1)
+	enddo
+	endif
+
+	if (npx .eq. npx0-1) then
+	do i=1,nx
+	call OCFD_DF2_BOUND_5th(u(i,:),f(i,:),ny,hy,2)
+	enddo
+	endif
+
+	endif
+
+	endif
+end subroutine
+!=======by JQ.Chen 201809
+
+
 subroutine OCFD_DF1_BOUND_5th(v,df,n,h,flag)
 	include 'openNS3d.h'		
 	real(kind=OCFD_REAL_KIND)::h
@@ -392,11 +471,34 @@ subroutine OCFD_DF1_BOUND_5th(v,df,n,h,flag)
 
 	if (flag.eq.1) then
 
-    S0=13.d0/12.d0*(v(1)-2.d0*v(1)+v(2))**2+   &
-        1.d0/4.d0*(3.d0*v(1)-4.d0*v(1)+v(2))**2
+    S0=13.d0/12.d0*(v(2)-2.d0*v(1)+v(2))**2+   &
+        1.d0/4.d0*(3.d0*v(2)-4.d0*v(1)+v(2))**2
 
-    S1=13.d0/12.d0*(v(2)-2.d0*v(1)+v(1))**2+   &
-    	1.d0/4.d0*(v(2)-v(1))**2
+    S1=13.d0/12.d0*(v(3)-2.d0*v(2)+v(1))**2+   &
+    	1.d0/4.d0*(v(3)-v(1))**2
+
+    S2=13.d0/12.d0*(v(4)-2.d0*v(3)+v(2))**2+   &
+        1.d0/4.d0*(v(4)-4.d0*v(3)+3.d0*v(2))**2
+
+    a0=C03/((ep+S0)**2)
+	a1=C13/((ep+S1)**2)
+	a2=C23/((ep+S2)**2)
+
+	W0=a0/(a0+a1+a2)
+    W1=a1/(a0+a1+a2)
+	W2=a2/(a0+a1+a2)
+
+	q03=1.d0/3.d0*v(2)+5.d0/6.d0*v(1)-1.d0/6.d0*v(2)
+	q13=-1.d0/6.d0*v(3)+5.d0/6.d0*v(2)+1.d0/3.d0*v(1)
+	q23=1.d0/3.d0*v(4)-7.d0/6.d0*v(3)+11.d0/6.d0*v(2)
+
+	hj(0)=W0*q03+W1*q13+W2*q23
+
+    S0=13.d0/12.d0*(v(1)-2.d0*v(2)+v(3))**2+   &
+        1.d0/4.d0*(3.d0*v(1)-4.d0*v(2)+v(3))**2
+
+    S1=13.d0/12.d0*(v(2)-2.d0*v(1)+v(2))**2+   &
+        1.d0/4.d0*(v(2)-v(2))**2
 
     S2=13.d0/12.d0*(v(3)-2.d0*v(2)+v(1))**2+   &
         1.d0/4.d0*(v(3)-4.d0*v(2)+3.d0*v(1))**2
@@ -409,32 +511,9 @@ subroutine OCFD_DF1_BOUND_5th(v,df,n,h,flag)
     W1=a1/(a0+a1+a2)
 	W2=a2/(a0+a1+a2)
 
-	q03=1.d0/3.d0*v(1)+5.d0/6.d0*v(1)-1.d0/6.d0*v(2)
-	q13=-1.d0/6.d0*v(2)+5.d0/6.d0*v(1)+1.d0/3.d0*v(1)
-	q23=1.d0/3.d0*v(3)-7.d0/6.d0*v(2)+11.d0/6.d0*v(1)
-
-	hj(0)=W0*q03+W1*q13+W2*q23
-
-    S0=13.d0/12.d0*(v(1)-2.d0*v(2)+v(3))**2+   &
-        1.d0/4.d0*(3.d0*v(1)-4.d0*v(2)+v(3))**2
-
-    S1=13.d0/12.d0*(v(1)-2.d0*v(1)+v(2))**2+   &
-        1.d0/4.d0*(v(1)-v(2))**2
-
-    S2=13.d0/12.d0*(v(2)-2.d0*v(1)+v(1))**2+   &
-        1.d0/4.d0*(v(2)-4.d0*v(1)+3.d0*v(1))**2
-
-    a0=C03/((ep+S0)**2)
-	a1=C13/((ep+S1)**2)
-	a2=C23/((ep+S2)**2)
-
-	W0=a0/(a0+a1+a2)
-    W1=a1/(a0+a1+a2)
-	W2=a2/(a0+a1+a2)
-
 	q03=1.d0/3.d0*v(1)+5.d0/6.d0*v(2)-1.d0/6.d0*v(3)
-	q13=-1.d0/6.d0*v(1)+5.d0/6.d0*v(1)+1.d0/3.d0*v(2)
-	q23=1.d0/3.d0*v(2)-7.d0/6.d0*v(1)+11.d0/6.d0*v(1)
+	q13=-1.d0/6.d0*v(2)+5.d0/6.d0*v(1)+1.d0/3.d0*v(2)
+	q23=1.d0/3.d0*v(3)-7.d0/6.d0*v(2)+11.d0/6.d0*v(1)
 
 	hj(1)=W0*q03+W1*q13+W2*q23	
 	
@@ -442,10 +521,10 @@ subroutine OCFD_DF1_BOUND_5th(v,df,n,h,flag)
         1.d0/4.d0*(3.d0*v(2)-4.d0*v(3)+v(4))**2
 
     S1=13.d0/12.d0*(v(1)-2.d0*v(2)+v(3))**2+   &
-        1.d0/4.d0*(v(1)-v(2))**2
+        1.d0/4.d0*(v(1)-v(3))**2
 
-    S2=13.d0/12.d0*(v(1)-2.d0*v(1)+v(2))**2+   &
-        1.d0/4.d0*(v(1)-4.d0*v(1)+3.d0*v(2))**2
+    S2=13.d0/12.d0*(v(2)-2.d0*v(1)+v(2))**2+   &
+        1.d0/4.d0*(v(2)-4.d0*v(1)+3.d0*v(2))**2
 
     a0=C03/((ep+S0)**2)
 	a1=C13/((ep+S1)**2)
@@ -457,7 +536,7 @@ subroutine OCFD_DF1_BOUND_5th(v,df,n,h,flag)
 
 	q03=1.d0/3.d0*v(2)+5.d0/6.d0*v(3)-1.d0/6.d0*v(4)
 	q13=-1.d0/6.d0*v(1)+5.d0/6.d0*v(2)+1.d0/3.d0*v(3)
-	q23=1.d0/3.d0*v(1)-7.d0/6.d0*v(1)+11.d0/6.d0*v(2)
+	q23=1.d0/3.d0*v(2)-7.d0/6.d0*v(1)+11.d0/6.d0*v(2)
 
 	hj(2)=W0*q03+W1*q13+W2*q23
 
@@ -490,8 +569,8 @@ subroutine OCFD_DF1_BOUND_5th(v,df,n,h,flag)
 
 	hj(n-2)=W0*q03+W1*q13+W2*q23
 
-	S0=13.d0/12.d0*(v(n-1)-2.d0*v(n)+v(n))**2+   &
-        1.d0/4.d0*(3.d0*v(n-1)-4.d0*v(n)+v(n))**2
+	S0=13.d0/12.d0*(v(n-1)-2.d0*v(n)+v(n-1))**2+   &
+        1.d0/4.d0*(3.d0*v(n-1)-4.d0*v(n)+v(n-1))**2
 
     S1=13.d0/12.d0*(v(n-2)-2.d0*v(n-1)+v(n))**2+   &
         1.d0/4.d0*(v(n-2)-v(n))**2
@@ -507,17 +586,17 @@ subroutine OCFD_DF1_BOUND_5th(v,df,n,h,flag)
     W1=a1/(a0+a1+a2)
 	W2=a2/(a0+a1+a2)
 
-	q03=1.d0/3.d0*v(n-1)+5.d0/6.d0*v(n)-1.d0/6.d0*v(n)
+	q03=1.d0/3.d0*v(n-1)+5.d0/6.d0*v(n)-1.d0/6.d0*v(n-1)
 	q13=-1.d0/6.d0*v(n-2)+5.d0/6.d0*v(n-1)+1.d0/3.d0*v(n)
 	q23=1.d0/3.d0*v(n-3)-7.d0/6.d0*v(n-2)+11.d0/6.d0*v(n-1)
 
 	hj(n-1)=W0*q03+W1*q13+W2*q23
 
-	S0=13.d0/12.d0*(v(n)-2.d0*v(n)+v(n-1))**2+   &
-        1.d0/4.d0*(3.d0*v(n)-4.d0*v(n)+v(n-1))**2
+	S0=13.d0/12.d0*(v(n)-2.d0*v(n-1)+v(n-2))**2+   &
+        1.d0/4.d0*(3.d0*v(n)-4.d0*v(n-1)+v(n-2))**2
 
-    S1=13.d0/12.d0*(v(n-1)-2.d0*v(n)+v(n))**2+   &
-        1.d0/4.d0*(v(n-1)-v(n))**2
+    S1=13.d0/12.d0*(v(n-1)-2.d0*v(n)+v(n-1))**2+   &
+        1.d0/4.d0*(v(n-1)-v(n-1))**2
 
     S2=13.d0/12.d0*(v(n-2)-2.d0*v(n-1)+v(n))**2+   &
         1.d0/4.d0*(v(n-2)-4.d0*v(n-1)+3.d0*v(n))**2
@@ -530,9 +609,175 @@ subroutine OCFD_DF1_BOUND_5th(v,df,n,h,flag)
     W1=a1/(a0+a1+a2)
 	W2=a2/(a0+a1+a2)
 
-	q03=1.d0/3.d0*v(n)+5.d0/6.d0*v(n)-1.d0/6.d0*v(n-1)
-	q13=-1.d0/6.d0*v(n-1)+5.d0/6.d0*v(n)+1.d0/3.d0*v(n)
+	q03=1.d0/3.d0*v(n)+5.d0/6.d0*v(n-1)-1.d0/6.d0*v(n-2)
+	q13=-1.d0/6.d0*v(n-1)+5.d0/6.d0*v(n)+1.d0/3.d0*v(n-1)
 	q23=1.d0/3.d0*v(n-2)-7.d0/6.d0*v(n-1)+11.d0/6.d0*v(n)
+
+	hj(n)=W0*q03+W1*q13+W2*q23
+
+    do k=n-1,n
+		df(k)=(hj(k)-hj(k-1))/h
+    enddo
+
+	endif
+end  subroutine
+
+subroutine OCFD_DF2_BOUND_5th(v,df,n,h,flag)
+	include 'openNS3d.h'		
+	real(kind=OCFD_REAL_KIND)::h
+	real(kind=OCFD_REAL_KIND)::v(1-LAP:n+LAP),df(1-LAP:n+LAP)
+	integer n,flag,k
+    real(kind=OCFD_REAL_KIND):: hj(1-LAP:n+LAP)
+    real(kind=OCFD_REAL_KIND):: ep,C03,C13,C23,S0,S1,S2,a0,a1,a2,W0,W1,W2,q03,q13,q23
+
+     ep=1.d-6
+	 C03=3.d0/10.d0
+   	 C13=3.d0/5.d0
+	 C23=1.d0/10.d0
+
+	if (flag.eq.1) then
+
+    S0=13.d0/12.d0*(v(1)-2.d0*v(2)+v(3))**2+   &
+        1.d0/4.d0*(3.d0*v(1)-4.d0*v(2)+v(3))**2
+
+    S1=13.d0/12.d0*(v(2)-2.d0*v(1)+v(2))**2+   &
+    	1.d0/4.d0*(v(2)-v(2))**2
+
+    S2=13.d0/12.d0*(v(3)-2.d0*v(2)+v(1))**2+   &
+        1.d0/4.d0*(v(3)-4.d0*v(2)+3.d0*v(1))**2
+
+    a0=C03/((ep+S0)**2)
+	a1=C13/((ep+S1)**2)
+	a2=C23/((ep+S2)**2)
+
+	W0=a0/(a0+a1+a2)
+    W1=a1/(a0+a1+a2)
+	W2=a2/(a0+a1+a2)
+
+	q03=1.d0/3.d0*v(1)+5.d0/6.d0*v(2)-1.d0/6.d0*v(3)
+	q13=-1.d0/6.d0*v(2)+5.d0/6.d0*v(1)+1.d0/3.d0*v(2)
+	q23=1.d0/3.d0*v(3)-7.d0/6.d0*v(2)+11.d0/6.d0*v(1)
+
+	hj(0)=W0*q03+W1*q13+W2*q23
+
+    S0=13.d0/12.d0*(v(2)-2.d0*v(1)+v(2))**2+   &
+        1.d0/4.d0*(3.d0*v(2)-4.d0*v(1)+v(2))**2
+
+    S1=13.d0/12.d0*(v(3)-2.d0*v(2)+v(1))**2+   &
+        1.d0/4.d0*(v(3)-v(1))**2
+
+    S2=13.d0/12.d0*(v(4)-2.d0*v(3)+v(2))**2+   &
+        1.d0/4.d0*(v(4)-4.d0*v(3)+3.d0*v(2))**2
+
+    a0=C03/((ep+S0)**2)
+	a1=C13/((ep+S1)**2)
+	a2=C23/((ep+S2)**2)
+
+	W0=a0/(a0+a1+a2)
+    W1=a1/(a0+a1+a2)
+	W2=a2/(a0+a1+a2)
+
+	q03=1.d0/3.d0*v(2)+5.d0/6.d0*v(1)-1.d0/6.d0*v(2)
+	q13=-1.d0/6.d0*v(3)+5.d0/6.d0*v(2)+1.d0/3.d0*v(1)
+	q23=1.d0/3.d0*v(4)-7.d0/6.d0*v(3)+11.d0/6.d0*v(2)
+
+	hj(1)=W0*q03+W1*q13+W2*q23	
+	
+    S0=13.d0/12.d0*(v(3)-2.d0*v(2)+v(1))**2+   &
+        1.d0/4.d0*(3.d0*v(3)-4.d0*v(2)+v(1))**2
+
+    S1=13.d0/12.d0*(v(4)-2.d0*v(3)+v(2))**2+   &
+        1.d0/4.d0*(v(4)-v(2))**2
+
+    S2=13.d0/12.d0*(v(5)-2.d0*v(4)+v(3))**2+   &
+        1.d0/4.d0*(v(5)-4.d0*v(4)+3.d0*v(3))**2
+
+    a0=C03/((ep+S0)**2)
+	a1=C13/((ep+S1)**2)
+	a2=C23/((ep+S2)**2)
+
+	W0=a0/(a0+a1+a2)
+    W1=a1/(a0+a1+a2)
+	W2=a2/(a0+a1+a2)
+
+	q03=1.d0/3.d0*v(3)+5.d0/6.d0*v(2)-1.d0/6.d0*v(1)
+	q13=-1.d0/6.d0*v(4)+5.d0/6.d0*v(3)+1.d0/3.d0*v(2)
+	q23=1.d0/3.d0*v(5)-7.d0/6.d0*v(4)+11.d0/6.d0*v(3)
+
+	hj(2)=W0*q03+W1*q13+W2*q23
+
+    do k=1,2
+		df(k)=(hj(k)-hj(k-1))/h
+    enddo
+	
+	elseif (flag.eq.2) then
+
+    S0=13.d0/12.d0*(v(n-1)-2.d0*v(n-2)+v(n-3))**2+   &
+        1.d0/4.d0*(3.d0*v(n-1)-4.d0*v(n-2)+v(n-3))**2
+
+    S1=13.d0/12.d0*(v(n)-2.d0*v(n-1)+v(n-2))**2+   &
+        1.d0/4.d0*(v(n)-v(n-2))**2
+
+    S2=13.d0/12.d0*(v(n-1)-2.d0*v(n)+v(n-1))**2+   &
+        1.d0/4.d0*(v(n-1)-4.d0*v(n)+3.d0*v(n-1))**2
+
+    a0=C03/((ep+S0)**2)
+	a1=C13/((ep+S1)**2)
+	a2=C23/((ep+S2)**2)
+
+	W0=a0/(a0+a1+a2)
+    W1=a1/(a0+a1+a2)
+	W2=a2/(a0+a1+a2)
+
+	q03=1.d0/3.d0*v(n-1)+5.d0/6.d0*v(n-2)-1.d0/6.d0*v(n-3)
+	q13=-1.d0/6.d0*v(n)+5.d0/6.d0*v(n-1)+1.d0/3.d0*v(n-2)
+	q23=1.d0/3.d0*v(n-1)-7.d0/6.d0*v(n)+11.d0/6.d0*v(n-1)
+
+	hj(n-2)=W0*q03+W1*q13+W2*q23
+
+	S0=13.d0/12.d0*(v(n)-2.d0*v(n-1)+v(n-2))**2+   &
+        1.d0/4.d0*(3.d0*v(n)-4.d0*v(n-1)+v(n-2))**2
+
+    S1=13.d0/12.d0*(v(n-1)-2.d0*v(n)+v(n-1))**2+   &
+        1.d0/4.d0*(v(n-1)-v(n-1))**2
+
+    S2=13.d0/12.d0*(v(n-2)-2.d0*v(n-1)+v(n))**2+   &
+        1.d0/4.d0*(v(n-2)-4.d0*v(n-1)+3.d0*v(n))**2
+
+    a0=C03/((ep+S0)**2)
+	a1=C13/((ep+S1)**2)
+	a2=C23/((ep+S2)**2)
+
+	W0=a0/(a0+a1+a2)
+    W1=a1/(a0+a1+a2)
+	W2=a2/(a0+a1+a2)
+
+	q03=1.d0/3.d0*v(n)+5.d0/6.d0*v(n-1)-1.d0/6.d0*v(n-2)
+	q13=-1.d0/6.d0*v(n-1)+5.d0/6.d0*v(n)+1.d0/3.d0*v(n-1)
+	q23=1.d0/3.d0*v(n-2)-7.d0/6.d0*v(n-1)+11.d0/6.d0*v(n)
+
+	hj(n-1)=W0*q03+W1*q13+W2*q23
+
+	S0=13.d0/12.d0*(v(n-1)-2.d0*v(n)+v(n-1))**2+   &
+        1.d0/4.d0*(3.d0*v(n-1)-4.d0*v(n)+v(n-1))**2
+
+    S1=13.d0/12.d0*(v(n-2)-2.d0*v(n-1)+v(n))**2+   &
+        1.d0/4.d0*(v(n-2)-v(n))**2
+
+    S2=13.d0/12.d0*(v(n-3)-2.d0*v(n-2)+v(n-1))**2+   &
+        1.d0/4.d0*(v(n-3)-4.d0*v(n-2)+3.d0*v(n-1))**2
+
+    a0=C03/((ep+S0)**2)
+	a1=C13/((ep+S1)**2)
+	a2=C23/((ep+S2)**2)
+
+	W0=a0/(a0+a1+a2)
+    W1=a1/(a0+a1+a2)
+	W2=a2/(a0+a1+a2)
+
+	q03=1.d0/3.d0*v(n-1)+5.d0/6.d0*v(n)-1.d0/6.d0*v(n-1)
+	q13=-1.d0/6.d0*v(n-2)+5.d0/6.d0*v(n-1)+1.d0/3.d0*v(n)
+	q23=1.d0/3.d0*v(n-3)-7.d0/6.d0*v(n-2)+11.d0/6.d0*v(n-1)
 
 	hj(n)=W0*q03+W1*q13+W2*q23
 

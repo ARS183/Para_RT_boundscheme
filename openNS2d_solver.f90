@@ -230,17 +230,18 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 			call du2_weno5(Eneg4(:,j),df_Eneg4(:,j),nx,hx)	
 		end do
 
-			call OCFD_DFX_BOUND_CHECK_2d(Epos1,df_Epos1,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Eneg1,df_Eneg1,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Epos2,df_Epos2,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Eneg2,df_Eneg2,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Epos3,df_Epos3,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Eneg3,df_Eneg3,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Epos4,df_Epos4,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Eneg4,df_Eneg4,NUM_METHOD_OTH)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Epos1,df_Epos1,NUM_METHOD_OTH,1)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Eneg1,df_Eneg1,NUM_METHOD_OTH,2)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Epos2,df_Epos2,NUM_METHOD_OTH,1)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Eneg2,df_Eneg2,NUM_METHOD_OTH,2)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Epos3,df_Epos3,NUM_METHOD_OTH,1)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Eneg3,df_Eneg3,NUM_METHOD_OTH,2)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Epos4,df_Epos4,NUM_METHOD_OTH,1)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Eneg4,df_Eneg4,NUM_METHOD_OTH,2)
 
 	elseif (npx0==1) then
-
+	
+		if (Iperiodic_X .eq. 1) then
 		Epos1(-3:0,:)=Epos1(nx-4:nx-1,:)
 		Epos2(-3:0,:)=Epos2(nx-4:nx-1,:)
 		Epos3(-3:0,:)=Epos3(nx-4:nx-1,:)
@@ -261,6 +262,7 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 		Eneg2(nx+1:nx+4,:)=Eneg2(2:5,:)
 		Eneg3(nx+1:nx+4,:)=Eneg3(2:5,:)
 		Eneg4(nx+1:nx+4,:)=Eneg4(2:5,:)
+		endif
 
 		do j=1,ny
 			call du1_weno5(Epos1(:,j),df_Epos1(:,j),nx,hx)
@@ -276,14 +278,14 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 			call du2_weno5(Eneg4(:,j),df_Eneg4(:,j),nx,hx)	
 		end do
 
-			call OCFD_DFX_BOUND_CHECK_2d(Epos1,df_Epos1,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Eneg1,df_Eneg1,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Epos2,df_Epos2,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Eneg2,df_Eneg2,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Epos3,df_Epos3,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Eneg3,df_Eneg3,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Epos4,df_Epos4,NUM_METHOD_OTH)
-			call OCFD_DFX_BOUND_CHECK_2d(Eneg4,df_Eneg4,NUM_METHOD_OTH)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Epos1,df_Epos1,NUM_METHOD_OTH,1)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Eneg1,df_Eneg1,NUM_METHOD_OTH,2)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Epos2,df_Epos2,NUM_METHOD_OTH,1)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Eneg2,df_Eneg2,NUM_METHOD_OTH,2)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Epos3,df_Epos3,NUM_METHOD_OTH,1)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Eneg3,df_Eneg3,NUM_METHOD_OTH,2)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Epos4,df_Epos4,NUM_METHOD_OTH,1)
+			call OCFD_DFX_REFBOUND_CHECK_2d(Eneg4,df_Eneg4,NUM_METHOD_OTH,2)
 	endif
 
 
@@ -311,17 +313,18 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 			call du2_weno5(Fneg4(i,:),df_Fneg4(i,:),ny,hy)	
 		end do
 
-			call OCFD_DFY_BOUND_CHECK_2d(Fpos1,df_Fpos1,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fneg1,df_Fneg1,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fpos2,df_Fpos2,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fneg2,df_Fneg2,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fpos3,df_Fpos3,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fneg3,df_Fneg3,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fpos4,df_Fpos4,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fneg4,df_Fneg4,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fpos1,df_Fpos1,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fneg1,df_Fneg1,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fpos2,df_Fpos2,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fneg2,df_Fneg2,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fpos3,df_Fpos3,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fneg3,df_Fneg3,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fpos4,df_Fpos4,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fneg4,df_Fneg4,NUM_METHOD_OTH)
 
 	elseif (npy0==1) then
 
+		if (Iperiodic_Y .eq. 1) then
 		Fpos1(:,-3:0)=Fpos1(:,ny-4:ny-1)
 		Fpos2(:,-3:0)=Fpos2(:,ny-4:ny-1)
 		Fpos3(:,-3:0)=Fpos3(:,ny-4:ny-1)
@@ -342,6 +345,7 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 		Fneg2(:,ny+1:ny+4)=Fneg2(:,2:5)
 		Fneg3(:,ny+1:ny+4)=Fneg3(:,2:5)
 		Fneg4(:,ny+1:ny+4)=Fneg4(:,2:5)
+		endif
 
 		do i=1,nx
 			call du1_weno5(Fpos1(i,:),df_Fpos1(i,:),ny,hy)
@@ -357,14 +361,14 @@ subroutine computeR(rho,u,v,p,R_st,R_nd,R_rd,R_th)
 			call du2_weno5(Fneg4(i,:),df_Fneg4(i,:),ny,hy)	
 		end do
 
-			call OCFD_DFY_BOUND_CHECK_2d(Fpos1,df_Fpos1,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fneg1,df_Fneg1,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fpos2,df_Fpos2,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fneg2,df_Fneg2,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fpos3,df_Fpos3,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fneg3,df_Fneg3,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fpos4,df_Fpos4,NUM_METHOD_OTH)
-			call OCFD_DFY_BOUND_CHECK_2d(Fneg4,df_Fneg4,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fpos1,df_Fpos1,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fneg1,df_Fneg1,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fpos2,df_Fpos2,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fneg2,df_Fneg2,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fpos3,df_Fpos3,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fneg3,df_Fneg3,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fpos4,df_Fpos4,NUM_METHOD_OTH)
+			call OCFD_DFY_REFBOUND_CHECK_2d(Fneg4,df_Fneg4,NUM_METHOD_OTH)
 
 	endif
 
