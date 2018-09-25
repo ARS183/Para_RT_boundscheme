@@ -423,13 +423,13 @@ subroutine OCFD_DFY_REFBOUND_CHECK_2d(u,f,NUM_METHOD,pmflag)
 
 	if (pmflag .eq. 1) then
 
-	if (npx .eq. 0) then
+	if (npy .eq. 0) then
 	do i=1,nx
 	call OCFD_DF1_BOUND_5th(u(i,:),f(i,:),ny,hy,1)
 	enddo
 	endif
 
-	if (npx .eq. npx0-1) then
+	if (npy .eq. npy0-1) then
 	do i=1,nx
 	call OCFD_DF1_BOUND_5th(u(i,:),f(i,:),ny,hy,2)
 	enddo
@@ -437,13 +437,13 @@ subroutine OCFD_DFY_REFBOUND_CHECK_2d(u,f,NUM_METHOD,pmflag)
 
 	elseif (pmflag .eq. 2) then
 
-	if (npx .eq. 0) then
+	if (npy .eq. 0) then
 	do i=1,nx
 	call OCFD_DF2_BOUND_5th(u(i,:),f(i,:),ny,hy,1)
 	enddo
 	endif
 
-	if (npx .eq. npx0-1) then
+	if (npy .eq. npy0-1) then
 	do i=1,nx
 	call OCFD_DF2_BOUND_5th(u(i,:),f(i,:),ny,hy,2)
 	enddo
