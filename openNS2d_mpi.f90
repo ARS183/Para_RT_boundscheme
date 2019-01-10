@@ -8,9 +8,9 @@ subroutine part2d()
     real(kind=OCFD_REAL_KIND) :: pi !!
 
     pi=datan(1.d0)*4.d0 !!
-	hx=slx/dble(nx_global-1)!!
+!	hx=slx/dble(nx_global-1)!!
 	hy=sly/dble(ny_global-1)!!
-!	hx=slx/dble(nx_global)
+	hx=slx/dble(nx_global)
 !	hy=sly/dble(ny_global)
 
 	if (np_size .ne. npx0*npy0) then	
@@ -112,23 +112,23 @@ end subroutine
 !!
 !               npx=mod(my_id,npx0)
 !               npy=my_id/npx0      
-               if (npx .eq. 0) then
-               do j=1,ny
-               do i=1,LAP
-               k1=(j-1)*LAP+i
-               tmp_send1(k1)=f(i+1,j)
-               enddo
-               enddo
-               endif
+        !       if (npx .eq. 0) then
+        !       do j=1,ny
+        !       do i=1,LAP
+        !       k1=(j-1)*LAP+i
+        !       tmp_send1(k1)=f(i+1,j)
+        !       enddo
+        !       enddo
+        !       endif
 
-               if (npx .eq. npx0-1) then
-               do j=1,ny
-               do i=1,LAP
-               k1=(j-1)*LAP+i
-               tmp_send2(k1)=f(nx-LAP+i-1,j)
-               enddo
-               enddo
-               endif
+        !       if (npx .eq. npx0-1) then
+        !       do j=1,ny
+        !       do i=1,LAP
+        !       k1=(j-1)*LAP+i
+        !       tmp_send2(k1)=f(nx-LAP+i-1,j)
+        !       enddo
+        !       enddo
+        !       endif
 !!
 
 		call MPI_Sendrecv(tmp_send1,LAP*ny,  OCFD_DATA_TYPE, ID_XM1, 9000, &
@@ -176,25 +176,25 @@ end subroutine
 !!
 !                npx=mod(my_id,npx0)
 !               npy=my_id/npx0
-                if (npy .eq. 0) then
-		do j=1,LAP
-		do i=1-LAP,nx+LAP   !!no2
-		k1=(j-1)*(nx+2*LAP)+i+LAP
-		tmp_send1(k1)=f(i,j+1)
-!		tmp_send2(k1)=f(i,ny+j-LAP)
-		enddo
-                enddo
-                endif
+    !    if (npy .eq. 0) then
+	!	do j=1,LAP
+	!	do i=1-LAP,nx+LAP   !!no2
+	!	k1=(j-1)*(nx+2*LAP)+i+LAP
+	!	tmp_send1(k1)=f(i,j+1)
+!	!	tmp_send2(k1)=f(i,ny+j-LAP)
+	!	enddo
+    !    enddo
+    !    endif
 
-                if (npy .eq. npy0-1) then
-		do j=1,LAP
-		do i=1-LAP,nx+LAP  !!no2
-		k1=(j-1)*(nx+2*LAP)+i+LAP
-!		tmp_send1(k1)=f(i,j)
-		tmp_send2(k1)=f(i,ny-LAP+j-1)
-		enddo
-                enddo
-                endif
+    !    if (npy .eq. npy0-1) then
+	!	do j=1,LAP
+	!	do i=1-LAP,nx+LAP  !!no2
+	!	k1=(j-1)*(nx+2*LAP)+i+LAP
+!	!	tmp_send1(k1)=f(i,j)
+	!	tmp_send2(k1)=f(i,ny-LAP+j-1)
+	!	enddo
+    !    enddo
+    !    endif
 !!
 		call MPI_Sendrecv(tmp_send1,LAP*(nx+2*LAP),  OCFD_DATA_TYPE, ID_YM1, 9000, &
 		    tmp_recv2, LAP*(nx+2*LAP),  OCFD_DATA_TYPE,ID_YP1, 9000,MPI_COMM_WORLD,Status,ierr)   !!no2

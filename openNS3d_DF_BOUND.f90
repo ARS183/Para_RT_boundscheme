@@ -148,7 +148,8 @@
 	goto 100
 
 	else if(NUM_METHOD .eq. OCFD_NUMERICAL_AECDS_6th .or. NUM_METHOD .eq. OCFD_NUMERICAL_AECDS_o4th) then
-	call OCFD_DF_BOUND_6th(u,f,n,h,flag)
+	!call OCFD_DF_BOUND_6th(u,f,n,h,flag)
+	call OCFD_DF_BOUND_6th_1(u,f,n,h,flag)
 	goto 100
 
 

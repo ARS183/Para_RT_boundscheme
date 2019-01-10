@@ -12,8 +12,8 @@ subroutine VanLeerE(rho,u,v,p,Epos1,Epos2,Epos3,Epos4,Eneg1,Eneg2,Eneg3,Eneg4)
  
 
     gama=5.d0/3.d0
-    do j=1,ny
-        do i=1,nx
+    do j=1-LAP,ny+LAP
+        do i=1-LAP,nx+LAP
             cs(i,j)=dsqrt(gama*p(i,j)/rho(i,j))
             Me(i,j)=u(i,j)/cs(i,j)
             eng(i,j)=p(i,j)/(gama-1.d0)+rho(i,j)/2.d0*(u(i,j)**2.d0+v(i,j)**2.d0)
@@ -76,8 +76,8 @@ subroutine VanLeerF(rho,u,v,p,Fpos1,Fpos2,Fpos3,Fpos4,Fneg1,Fneg2,Fneg3,Fneg4)
 
 
     gama=5.d0/3.d0
-    do j=1,ny
-        do i=1,nx
+    do j=1-LAP,ny+LAP
+        do i=1-LAP,nx+LAP
             cs(i,j)=dsqrt(gama*p(i,j)/rho(i,j))
             Mf(i,j)=v(i,j)/cs(i,j)
             eng(i,j)=p(i,j)/(gama-1.d0)+rho(i,j)/2.d0*(u(i,j)**2+v(i,j)**2)

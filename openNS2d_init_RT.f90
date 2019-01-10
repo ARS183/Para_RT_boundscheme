@@ -25,7 +25,7 @@ subroutine init_RT(rho,u,v,p,xx,yy) !!
 	
 		i_global=i_offset(npx)+i-1
 		j_global=j_offset(npy)+j-1
-		xx(i,j)=xbeg+dble(i_global-1)*hx
+		xx(i,j)=xbeg+dble(i_global-1)*hx+0.5d0*hx
 		yy(i,j)=ybeg+dble(j_global-1)*hy
 
 		if (yy(i,j) .gt. 0.5d0) then
@@ -45,18 +45,37 @@ subroutine init_RT(rho,u,v,p,xx,yy) !!
 	enddo
 	
 	if (npy==0) then
-		p(:,1)=1.d0
-		rho(:,1)=2.d0
-		u(:,1)=0.d0
-		v(:,1)=0.d0
+		p(:,-3:1)=1.d0
+		rho(:,-3:1)=2.d0
+		u(:,-3:1)=0.d0
+		v(:,-3:1)=0.d0
 	endif
 
 	if (npy==npy0-1) then
-		p(:,ny)=2.5d0
-		rho(:,ny)=1.d0
-		u(:,ny)=0.d0
-		v(:,ny)=0.d0
+		p(:,ny:ny+4)=2.5d0
+		rho(:,ny:ny+4)=1.d0
+		u(:,ny:ny+4)=0.d0
+		v(:,ny:ny+4)=0.d0
 	endif
-
+	
+		if (Iperiodic_X .ne. 1) then
+			if (npx .eq. 0) then
+				do k=1,4
+					rho(1-k,:)=rho(k,:)
+					u(1-k,:)=-u(k,:)
+					v(1-k,:)=v(k,:)
+					p(1-k,:)=p(k,:)
+				enddo
+			endif
+		
+			if (npx .eq. npx0-1) then
+				do k=nx+1,nx+4
+					rho(k,:)=rho(2*nx+1-k,:)
+					u(k,:)=-u(2*nx+1-k,:)
+					v(k,:)=v(2*nx+1-k,:)
+					p(k,:)=p(2*nx+1-k,:)
+				enddo
+			endif
+		endif
 !!
 	end subroutine
